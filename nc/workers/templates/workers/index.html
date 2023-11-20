@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'workers/reset.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'workers/style.css' %}"/>
+</head>
+<body>
+<header>
+    <ul>
+        {% for m in menu %}
+        <li class="text header-text">{{ m }}</li>
+        {% endfor %}
+    </ul>
+</header>
+<h1 class="text">{{ title }}</h1>
+<div class="main">
+    <div class="text right-bar">
+        <ul>
+            {% for m in menu %}
+            <li class="text header-text">{{ m }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="main-center">
+        <ul>
+        {% for p in posts %}
+        {% if p.is_published %}
+        <li>
+            <h2 class="text">{{ p.title }}</h2>
+            <p class="text">{{ p.content }}</p>
+            {% if not forloop.last %}
+            <hr>
+            {% endif %}
+        </li>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+</body>
+</html>

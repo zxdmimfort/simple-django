@@ -1,0 +1,40 @@
+.text {
+    color: whitesmoke;
+    font-size: 1.2rem;
+    font-family: "Roboto Light";
+}
+
+.header-text {
+    text-transform: uppercase;
+}
+.main {
+    display: flex;
+    flex-flow: row;
+}
+.right-bar {
+    flex: 1;
+    font-size: 1rem;
+}
+.main-center {
+    flex: 3;
+}
+body {
+    background-color: #0e1117;
+
+}
+ul {
+    display: flex;
+    flex-flow: column;
+    list-style-type: none;
+    justify-content: start;
+}
+header ul {
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+li {
+    padding: 20px;
+}
+header {
+    background-color: darkgreen;
+}

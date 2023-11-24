@@ -1,7 +1,5 @@
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound, Http404, HttpResponseRedirect
 from django.shortcuts import render
-from django.template.defaulttags import url
-from django.urls import reverse
 
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
@@ -10,7 +8,10 @@ menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Войти", 'url_name': 'login'},
 ]
 data_db = [
-    {'id': 1, 'title': 'Анджелина Джоли', 'content': 'Биография Анджелины Джоли', 'is_published': True},
+    {'id': 1, 'title': 'Анджелина Джоли', 'content': '''(англ. Angelina Jolie[7], при рождении Войт (англ. Voight), ранее Джоли Питт (англ. Jolie Pitt); род. 4 июня 1975, Лос-Анджелес, Калифорния, США) — американская актриса кино, телевидения и озвучивания, кинорежиссёр, сценаристка, продюсер, фотомодель, посол доброй воли ООН.
+
+Обладательница премии «Оскар», трёх премий «Золотой глобус» (первая актриса в истории, три года подряд выигравшая премию) и двух «Премий Гильдии киноактёров США».''',
+     'is_published': True},
     {'id': 2, 'title': 'Марго Робби', 'content': 'Биография Марго Робби', 'is_published': False},
     {'id': 3, 'title': 'Джулия Робертс', 'content': 'Биография Джулия Робертс', 'is_published': True},
 ]
@@ -28,6 +29,7 @@ def index(request: HttpRequest):
 def about(request: HttpRequest):
     data = {
         'title': 'О сайте',
+        'menu': menu,
     }
     return render(request, 'workers/about.html', data)
 

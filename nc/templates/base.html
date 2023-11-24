@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'workers/reset.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'workers/style.css' %}"/>
+</head>
+<body>
+<header style="padding-top: 0px">
+    <ul>
+        <li><a class="text header-text" href="{% url 'home' %}">Главная</a></li>
+        {% for m in menu %}
+        {% if not forloop.last %}<li>{% else %}<li class="last">{% endif %}
+            <a class="text header-text" href="{% url m.url_name %}">{{ m.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</header>
+
+{% block content %} {% endblock %}
+{% block hehe %}<h1 class="text">Это я block. Меня забыли реализовать</h1>{% endblock %}
+
+</body>
+</html>

@@ -1,50 +1,26 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'workers/reset.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'workers/style.css' %}"/>
-</head>
-<body>
-<header>
-    <ul>
-        <li><a class="text header-text" href="{% url 'home' %}">Главная</a></li>
-        {% for m in menu %}
-        <li>
-            <a class="text header-text" href="{% m.url_name %}">{{ m.title }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-</header>
-<h1 class="text">{{ title }}</h1>
-<div class="main">
-    <div class="text right-bar">
-        <ul>
-            {% for m in menu %}
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'workers/includes/nav.html' %}
+
+    <h1 class="text">{{ title }}</h1>
+    <div class="main">
+        <div class="main-center">
+            <ul>
+            {% for p in posts %}
+            {% if p.is_published %}
             <li>
-                <a class="text header-text" href="{% url m.url_name %}">{{ m.title }}</a>
+                <h2 class="text">{{ p.title }}</h2>
+                    <p class="text">{{ p.content|truncatewords:50 }}</p>
+                <p><a href="{% url 'post' p.id%}">Читать пост</a></p>
+                {% if not forloop.last %}
+                <hr>
+                {% endif %}
             </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="main-center">
-        <ul>
-        {% for p in posts %}
-        {% if p.is_published %}
-        <li>
-            <h2 class="text">{{ p.title }}</h2>
-            <p class="text">{{ p.content }}</p>
-            <p><a href="{% url 'post' p.id%}">Читать пост</a></p>
-            {% if not forloop.last %}
-            <hr>
             {% endif %}
-        </li>
-        {% endif %}
-        {% endfor %}
-        </ul>
+            {% endfor %}
+            </ul>
+        </div>
     </div>
-</div>
-</body>
-</html>
+
+    {% include 'workers/includes/nav.html' %}
+{% endblock %}

@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% include 'workers/includes/nav.html' %}
+{#    {% include 'workers/includes/nav.html' %}#}
 
-    <h1 class="text">{{ title }}</h1>
-    <div class="main">
+{#    <h1 class="text">{{ title }}</h1>#}
         <div class="main-center">
             <ul>
             {% for p in posts %}
@@ -20,7 +19,6 @@
             {% endfor %}
             </ul>
         </div>
-    </div>
 
-    {% include 'workers/includes/nav.html' %}
+{#    {% include 'workers/includes/nav.html' %}#}
 {% endblock %}

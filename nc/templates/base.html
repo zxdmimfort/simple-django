@@ -1,4 +1,5 @@
 {% load static %}
+{% load workers_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'workers/style.css' %}"/>
 </head>
 <body>
-<header style="padding-top: 0px">
+<header>
     <ul>
         <li><a class="text header-text" href="{% url 'home' %}">Главная</a></li>
         {% for m in menu %}
@@ -19,8 +20,27 @@
     </ul>
 </header>
 
-{% block content %} {% endblock %}
-{% block hehe %}<h1 class="text">Это я block. Меня забыли реализовать</h1>{% endblock %}
+{#{% get_categories as categories %}#}
 
+<div class="main">
+    <ul id="left-chapters">
+        {% if cat_selected == 0 %}
+            <li class="selected text">Все категории</li>
+        {% else %}
+            <li><a class="text" href="{% url 'home' %}">Все категории</a></li>
+        {% endif %}
+
+
+        {% show_categories cat_selected %}
+
+        <li class="share">
+            <p class="text">Наш канал <a class="share-yt text" href="..." target="_blank" rel="nofollow">youtube</a></p>
+        </li>
+    </ul>
+
+
+
+    {% block content %} {% endblock %}
+</div>
 </body>
 </html>

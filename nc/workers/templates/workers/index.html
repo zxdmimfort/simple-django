@@ -3,22 +3,19 @@
 {#    {% include 'workers/includes/nav.html' %}#}
 
 {#    <h1 class="text">{{ title }}</h1>#}
-        <div class="main-center">
-            <ul>
-            {% for p in posts %}
-            {% if p.is_published %}
+
+    <ul>
+        {% for p in posts %}
+        {% if p.is_published %}
             <li>
                 <h2 class="text">{{ p.title }}</h2>
-                    <p class="text">{{ p.content|truncatewords:50 }}</p>
-                <p><a href="{% url 'post' p.id%}">Читать пост</a></p>
-                {% if not forloop.last %}
-                <hr>
-                {% endif %}
+                <div class="text">{{ p.content|linebreaks|truncatewords:50 }}</div>
+                <p class="link-read-post"><a href="{{ p.get_absolute_url }}">Читать пост</a></p>
             </li>
-            {% endif %}
-            {% endfor %}
-            </ul>
-        </div>
+        {% endif %}
+        {% endfor %}
+    </ul>
+
 
 {#    {% include 'workers/includes/nav.html' %}#}
 {% endblock %}

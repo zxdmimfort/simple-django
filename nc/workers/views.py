@@ -18,7 +18,7 @@ cats_db = [
 
 
 def index(request: HttpRequest):
-    posts = Worker.objects.filter(is_published=True)
+    posts = Worker.published.all()
     data = {
         'title': 'Главная страница',
         'menu': menu,
@@ -69,7 +69,7 @@ def show_category(request, cat_id):
     data = {
         'title': 'Отображение по рубрикам',
         'menu': menu,
-        'posts': data_db,
+        'posts': Worker.published.all(),
         'cat_selected': cat_id,
     }
     return render(request, 'workers/index.html', data)

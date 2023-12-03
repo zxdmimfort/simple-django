@@ -8,7 +8,11 @@
         {% for p in posts %}
         {% if p.is_published %}
             <li>
-                <h2 class="text">{{ p.title }}</h2>
+                <div class="article-panel">
+                    <p class="first text">Категория: {{ p.cat }}</p>
+                    <p class="last text">Дата: {{ p.time_update|date:"d-m-Y H:i:s" }}</p>
+                </div>
+                <h2 class="text title header-text">{{ p.title }}</h2>
                 <div class="text">{{ p.content|linebreaks|truncatewords:50 }}</div>
                 <p class="link-read-post"><a href="{{ p.get_absolute_url }}">Читать пост</a></p>
             </li>

@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 
-from workers.models import Worker
+from workers.models import Worker, Category
 
 menu = [
     {'title': "О сайте", 'url_name': 'about'},
@@ -65,11 +65,13 @@ def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
 
-def show_category(request, cat_id):
+def show_category(request, cat_slug):
+    category = get_object_or_404(Category, slug=cat_slug)
+    posts = Worker.published.filter(cat_id=category.pk)
     data = {
-        'title': 'Отображение по рубрикам',
+        'title': f'Рубрика : {category.name}',
         'menu': menu,
-        'posts': Worker.published.all(),
-        'cat_selected': cat_id,
+        'posts': posts,
+        'cat_selected': category.pk,
     }
     return render(request, 'workers/index.html', data)

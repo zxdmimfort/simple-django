@@ -3,6 +3,14 @@
     font-size: 1.2rem;
     font-family: "Roboto Light";
 }
+.first, .last {
+    color: #cbcadb;
+    font-size: 1rem;
+}
+.title {
+    font-size: 1.4rem;
+
+}
 
 .header-text {
     text-transform: uppercase;

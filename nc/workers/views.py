@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 
-from workers.models import Worker, Category
+from workers.models import Worker, Category, TagPost
 
 menu = [
     {'title': "О сайте", 'url_name': 'about'},
@@ -74,4 +74,18 @@ def show_category(request, cat_slug):
         'posts': posts,
         'cat_selected': category.pk,
     }
+
+    return render(request, 'workers/index.html', data)
+
+
+def show_tag_postlist(request, tag_slug):
+    tag = get_object_or_404(TagPost, slug=tag_slug)
+    posts = tag.workers.filter(is_published=Worker.Status.PUBLISHED)
+    data = {
+        'title': f'Тег: {tag.tag}',
+        'menu': menu,
+        'posts': posts,
+        'cat_selected': None,
+    }
+
     return render(request, 'workers/index.html', data)

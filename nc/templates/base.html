@@ -37,9 +37,11 @@
         <li class="share">
             <p class="text">Наш канал <a class="share-yt text" href="..." target="_blank" rel="nofollow">youtube</a></p>
         </li>
+        <li>{% show_all_tags %}</li>
     </ul>
 
     <div class="main-center">
+        {% block breadcrumbs %} {% endblock %}
         {% block content %} {% endblock %}
     </div>
 </div>

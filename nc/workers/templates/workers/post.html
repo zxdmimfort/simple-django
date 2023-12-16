@@ -1,5 +1,20 @@
 {% extends 'base.html' %}
-{% load workers_tags %}
+{% block breadcrumbs %}
+<!-- Теги -->
+{% with post.tags.all as tags %}
+{% if tags %}
+    <div></div>
+    <ul class="tags-list">
+        <li class="text">Теги:</li>
+        {% for t in tags %}
+        <li><a href="{{ t.get_absolute_url }}">{{ t.tag }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+
 {% block content %}
     <h1 class="text">{{ title }}</h1>
 

@@ -10,15 +10,10 @@ menu = [
     {'title': "Войти", 'url_name': 'login'},
 ]
 
-cats_db = [
-    {'id': 1, 'name': 'Актрисы'},
-    {'id': 2, 'name': 'Певицы'},
-    {'id': 3, 'name': 'Спортсменки'},
-]
-
 
 def index(request: HttpRequest):
-    posts = Worker.published.all()
+    posts = Worker.published.all().select_related('cat')
+
     data = {
         'title': 'Главная страница',
         'menu': menu,
@@ -67,7 +62,8 @@ def page_not_found(request, exception):
 
 def show_category(request, cat_slug):
     category = get_object_or_404(Category, slug=cat_slug)
-    posts = Worker.published.filter(cat_id=category.pk)
+    posts = Worker.published.filter(cat_id=category.pk).select_related('cat')
+
     data = {
         'title': f'Рубрика : {category.name}',
         'menu': menu,
@@ -80,7 +76,8 @@ def show_category(request, cat_slug):
 
 def show_tag_postlist(request, tag_slug):
     tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.workers.filter(is_published=Worker.Status.PUBLISHED)
+    posts = tag.workers.filter(is_published=Worker.Status.PUBLISHED).select_related('cat')
+
     data = {
         'title': f'Тег: {tag.tag}',
         'menu': menu,

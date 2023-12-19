@@ -12,21 +12,23 @@ class Worker(models.Model):
         DRAFT = 0, 'Черновик'
         PUBLISHED = 1, 'Опубликовано'
 
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, verbose_name="Заголовок")
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
-    content = models.TextField(blank=True)
-    time_create = models.DateTimeField(auto_now_add=True)
-    time_update = models.DateTimeField(auto_now=True)
-    is_published = models.BooleanField(choices=Status.choices, default=Status.DRAFT)
+    content = models.TextField(blank=True, verbose_name="Текст статьи")
+    time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
+    time_update = models.DateTimeField(auto_now=True, verbose_name="Время изменения")
+    is_published = models.IntegerField(choices=Status.choices, default=Status.DRAFT, verbose_name="Статус")
 
-    cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts')
-    tags = models.ManyToManyField('TagPost', blank=True, related_name='workers')
-    husband = models.OneToOneField('Husband', blank=True, on_delete=models.SET_NULL, null=True)
+    cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name="Категория")
+    tags = models.ManyToManyField('TagPost', blank=True, related_name='workers', verbose_name="Теги")
+    husband = models.OneToOneField('Husband', blank=True, on_delete=models.SET_NULL, null=True, verbose_name="Муж")
 
     objects = models.Manager()
     published = PublishedModel()
 
     class Meta:
+        verbose_name = 'Работник',
+        verbose_name_plural = 'Работники'
         ordering = ['-time_create']
         indexes = [
             models.Index(fields=['-time_create']),
@@ -40,8 +42,12 @@ class Worker(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, db_index=True)
+    name = models.CharField(max_length=100, db_index=True, verbose_name="Категория")
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
     def get_absolute_url(self):
         return reverse('category', kwargs={'cat_slug': self.slug})

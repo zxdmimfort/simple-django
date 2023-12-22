@@ -1,0 +1,15 @@
+#header {
+    background: #0c4b33;
+}
+
+.dashboard {
+    background: #181d27;
+}
+
+.module caption {
+    background: #0c4b33;
+}
+
+#branding h1 a:visited {
+    color: #c1cad2;
+}

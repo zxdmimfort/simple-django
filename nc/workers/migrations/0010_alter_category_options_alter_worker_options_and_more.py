@@ -5,63 +5,90 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('workers', '0009_husband_m_count'),
+        ("workers", "0009_husband_m_count"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='category',
-            options={'verbose_name': 'Категория', 'verbose_name_plural': 'Категории'},
+            name="category",
+            options={"verbose_name": "Категория", "verbose_name_plural": "Категории"},
         ),
         migrations.AlterModelOptions(
-            name='worker',
-            options={'ordering': ['-time_create'], 'verbose_name': ('Работник',), 'verbose_name_plural': 'Работники'},
+            name="worker",
+            options={
+                "ordering": ["-time_create"],
+                "verbose_name": ("Работник",),
+                "verbose_name_plural": "Работники",
+            },
         ),
         migrations.AlterField(
-            model_name='category',
-            name='name',
-            field=models.CharField(db_index=True, max_length=100, verbose_name='Категория'),
+            model_name="category",
+            name="name",
+            field=models.CharField(
+                db_index=True, max_length=100, verbose_name="Категория"
+            ),
         ),
         migrations.AlterField(
-            model_name='worker',
-            name='cat',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='posts', to='workers.category', verbose_name='Категория'),
+            model_name="worker",
+            name="cat",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="posts",
+                to="workers.category",
+                verbose_name="Категория",
+            ),
         ),
         migrations.AlterField(
-            model_name='worker',
-            name='content',
-            field=models.TextField(blank=True, verbose_name='Текст статьи'),
+            model_name="worker",
+            name="content",
+            field=models.TextField(blank=True, verbose_name="Текст статьи"),
         ),
         migrations.AlterField(
-            model_name='worker',
-            name='husband',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='workers.husband', verbose_name='Муж'),
+            model_name="worker",
+            name="husband",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="workers.husband",
+                verbose_name="Муж",
+            ),
         ),
         migrations.AlterField(
-            model_name='worker',
-            name='is_published',
-            field=models.IntegerField(choices=[(0, 'Черновик'), (1, 'Опубликовано')], default=0, verbose_name='Статус'),
+            model_name="worker",
+            name="is_published",
+            field=models.IntegerField(
+                choices=[(0, "Черновик"), (1, "Опубликовано")],
+                default=0,
+                verbose_name="Статус",
+            ),
         ),
         migrations.AlterField(
-            model_name='worker',
-            name='tags',
-            field=models.ManyToManyField(blank=True, related_name='workers', to='workers.tagpost', verbose_name='Теги'),
+            model_name="worker",
+            name="tags",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="workers",
+                to="workers.tagpost",
+                verbose_name="Теги",
+            ),
         ),
         migrations.AlterField(
-            model_name='worker',
-            name='time_create',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Время создания'),
+            model_name="worker",
+            name="time_create",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Время создания"
+            ),
         ),
         migrations.AlterField(
-            model_name='worker',
-            name='time_update',
-            field=models.DateTimeField(auto_now=True, verbose_name='Время изменения'),
+            model_name="worker",
+            name="time_update",
+            field=models.DateTimeField(auto_now=True, verbose_name="Время изменения"),
         ),
         migrations.AlterField(
-            model_name='worker',
-            name='title',
-            field=models.CharField(max_length=255, verbose_name='Заголовок'),
+            model_name="worker",
+            name="title",
+            field=models.CharField(max_length=255, verbose_name="Заголовок"),
         ),
     ]

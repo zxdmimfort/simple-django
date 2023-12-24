@@ -4,23 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('workers', '0001_initial'),
+        ("workers", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='worker',
-            options={'ordering': ['-time_create']},
+            name="worker",
+            options={"ordering": ["-time_create"]},
         ),
         migrations.AddField(
-            model_name='worker',
-            name='slug',
-            field=models.SlugField(blank=True, default='', max_length=255, verbose_name='URL'),
+            model_name="worker",
+            name="slug",
+            field=models.SlugField(
+                blank=True, default="", max_length=255, verbose_name="URL"
+            ),
         ),
         migrations.AddIndex(
-            model_name='worker',
-            index=models.Index(fields=['-time_create'], name='workers_wor_time_cr_9e82e1_idx'),
+            model_name="worker",
+            index=models.Index(
+                fields=["-time_create"], name="workers_wor_time_cr_9e82e1_idx"
+            ),
         ),
     ]

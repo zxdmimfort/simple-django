@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('workers', '0008_husband_alter_worker_tags_worker_husband'),
+        ("workers", "0008_husband_alter_worker_tags_worker_husband"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='husband',
-            name='m_count',
+            model_name="husband",
+            name="m_count",
             field=models.IntegerField(blank=True, default=0),
         ),
     ]

@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('workers', '0003_alter_worker_slug'),
+        ("workers", "0003_alter_worker_slug"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='worker',
-            name='is_published',
-            field=models.BooleanField(choices=[(0, 'Черновик'), (1, 'Опубликовано')], default=0),
+            model_name="worker",
+            name="is_published",
+            field=models.BooleanField(
+                choices=[(0, "Черновик"), (1, "Опубликовано")], default=0
+            ),
         ),
     ]

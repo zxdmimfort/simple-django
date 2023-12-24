@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
+from workers.forms import AddPostForm
 from workers.models import Worker, Category, TagPost
 
 menu = [
@@ -32,7 +33,17 @@ def about(request: HttpRequest):
 
 
 def add_page(request: HttpRequest):
-    return HttpResponse("Добавление статьи")
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            try:
+                Worker.objects.create(**form.cleaned_data)
+                return redirect('home')
+            except:
+                form.add_error(None, 'Ошибка добавления поста')
+    else:
+        form = AddPostForm()
+    return render(request, 'workers/addpage.html', {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
 def contact(request: HttpRequest):

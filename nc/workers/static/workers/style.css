@@ -59,6 +59,11 @@ header ul {
 li {
     padding: 20px;
 }
+
 header {
     background-color: #0c4b33;
+}
+
+ul.errorlist li {
+    color: red;
 }

@@ -36,11 +36,8 @@ def add_page(request: HttpRequest):
     if request.method == "POST":
         form = AddPostForm(request.POST)
         if form.is_valid():
-            try:
-                Worker.objects.create(**form.cleaned_data)
-                return redirect("home")
-            except:
-                form.add_error(None, "Ошибка добавления поста")
+            form.save()
+            return redirect("home")
     else:
         form = AddPostForm()
     return render(

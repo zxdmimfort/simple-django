@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.utils.safestring import mark_safe
 
 from workers.models import Worker, Category
 
@@ -22,7 +23,7 @@ class MarriedFilter(admin.SimpleListFilter):
 
 @admin.register(Worker)
 class WorkerAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "time_create", "is_published", "cat", "brief_info")
+    list_display = ("id", "title", "post_photo", "time_create", "is_published", "cat")
     list_display_links = ("title",)
     list_editable = ("is_published", "cat")
     list_per_page = 5
@@ -30,15 +31,26 @@ class WorkerAdmin(admin.ModelAdmin):
     actions = ["set_published", "set_draft"]
     search_fields = ["title__startswith", "cat__name"]
     list_filter = [MarriedFilter, "cat__name", "is_published"]
-    fields = ["title", "slug", "content", "cat", "husband", "tags"]
+    fields = [
+        "title",
+        "slug",
+        "content",
+        "post_photo",
+        "photo",
+        "cat",
+        "husband",
+        "tags",
+    ]
     filter_horizontal = ["tags"]
     prepopulated_fields = {"slug": ("title",)}
-    # readonly_fields = ['slug']
-    # exclude = ['tags', 'is_published']
+    readonly_fields = ["post_photo"]
+    save_on_top = True
 
-    @admin.display(description="Краткое описание", ordering="content")
-    def brief_info(self, worker: Worker):
-        return f"Описание {len(worker.content)} символов."
+    @admin.display(description="Изображение")
+    def post_photo(self, worker: Worker):
+        if worker.photo:
+            return mark_safe(f"<img src='{worker.photo.url}' width='50'>")
+        return "Без фото"
 
     @admin.action(description="Опубликовать выбранные записи")
     def set_published(self, request, queryset):

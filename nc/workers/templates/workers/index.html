@@ -12,6 +12,9 @@
                     <p class="first text">Категория: {{ p.cat }}</p>
                     <p class="last text">Дата: {{ p.time_update|date:"d-m-Y H:i:s" }}</p>
                 </div>
+                {% if p.photo %}
+                    <p><img class="img-article-left thumb" src="{{ p.photo.url }}"></p>
+                {% endif %}
                 <h2 class="text title header-text">{{ p.title }}</h2>
                 <div class="text">{{ p.content|linebreaks|truncatewords:50 }}</div>
                 <p class="link-read-post"><a href="{{ p.get_absolute_url }}">Читать пост</a></p>

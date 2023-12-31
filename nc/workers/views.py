@@ -1,8 +1,9 @@
+import uuid
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 
-from workers.forms import AddPostForm
-from workers.models import Worker, Category, TagPost
+from workers.forms import AddPostForm, UploadFileForm
+from workers.models import Worker, Category, TagPost, UploadFiles
 
 menu = [
     {"title": "О сайте", "url_name": "about"},
@@ -24,17 +25,46 @@ def index(request: HttpRequest):
     return render(request, "workers/index.html", data)
 
 
+# def handle_uploaded_file(f):
+#     name = f.name
+#     import os
+#     from uuid import uuid4
+#
+#     ext = os.path.splitext(name)[1]
+#     name = str(uuid4()) + ext
+#
+#     with open(f"uploads/{name}", "wb+") as destination:
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+#     return name
+
+
+def create_name_file(name: str):
+    import os
+    from uuid import uuid4
+
+    ext = os.path.splitext(name)[1]
+    name = str(uuid4()) + ext
+    return name
+
+
 def about(request: HttpRequest):
-    data = {
-        "title": "О сайте",
-        "menu": menu,
-    }
-    return render(request, "workers/about.html", data)
+    if request.method == "POST":
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            fp = UploadFiles(file=form.cleaned_data["file"])
+            fp.save()
+    else:
+        form = UploadFileForm()
+
+    return render(
+        request, "workers/about.html", {"title": "О сайте", "menu": menu, "form": form}
+    )
 
 
 def add_page(request: HttpRequest):
     if request.method == "POST":
-        form = AddPostForm(request.POST)
+        form = AddPostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect("home")

@@ -60,6 +60,13 @@ class Worker(models.Model):
     is_published = models.IntegerField(
         choices=Status.choices, default=Status.DRAFT, verbose_name="Статус"
     )
+    photo = models.ImageField(
+        upload_to="photos/%Y/%m/%d",
+        default=None,
+        blank=True,
+        null=True,
+        verbose_name="Фото",
+    )
 
     cat = models.ForeignKey(
         "Category",
@@ -133,3 +140,7 @@ class Husband(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class UploadFiles(models.Model):
+    file = models.FileField(upload_to="uploads_model")

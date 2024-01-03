@@ -1,5 +1,5 @@
 {% for cat in cats %}
-    {% if cat.id == cat_selected %}
+    {% if forloop.counter == cat_selected %}
         <li class="selected text">{{ cat.name }}</li>
     {% else %}
         <li><a class="text" href="{{ cat.get_absolute_url }}">{{ cat.name }}</a></li>

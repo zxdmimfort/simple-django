@@ -1,6 +1,8 @@
 import uuid
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views import View
+from django.views.generic import TemplateView
 
 from workers.forms import AddPostForm, UploadFileForm
 from workers.models import Worker, Category, TagPost, UploadFiles
@@ -23,6 +25,24 @@ def index(request: HttpRequest):
         "cat_selected": 0,
     }
     return render(request, "workers/index.html", data)
+
+
+class WorkerHome(TemplateView):
+    template_name = "workers/index.html"
+    extra_context = {
+        "title": "Главная страница",
+        "menu": menu,
+        "posts": Worker.published.all().select_related("cat"),
+        "cat_selected": 0,
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Главная страница"
+        context["menu"] = menu
+        context["posts"] = Worker.published.all().select_related("cat")
+        context["cat_selected"] = int(self.request.GET.get("cat_id", 0))
+        return context
 
 
 # def handle_uploaded_file(f):
@@ -75,6 +95,28 @@ def add_page(request: HttpRequest):
         "workers/addpage.html",
         {"menu": menu, "title": "Добавление статьи", "form": form},
     )
+
+
+class AddPage(View):
+    def get(self, request: HttpRequest):
+        form = AddPostForm()
+        return render(
+            request,
+            "workers/addpage.html",
+            {"menu": menu, "title": "Добавление статьи", "form": form},
+        )
+
+    def post(self, request: HttpRequest):
+        form = AddPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("home")
+
+        return render(
+            request,
+            "workers/addpage.html",
+            {"menu": menu, "title": "Добавление статьи", "form": form},
+        )
 
 
 def contact(request: HttpRequest):

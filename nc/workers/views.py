@@ -2,7 +2,7 @@ import uuid
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 
 from workers.forms import AddPostForm, UploadFileForm
 from workers.models import Worker, Category, TagPost, UploadFiles
@@ -15,48 +15,21 @@ menu = [
 ]
 
 
-def index(request: HttpRequest):
-    posts = Worker.published.all().select_related("cat")
-
-    data = {
-        "title": "Главная страница",
-        "menu": menu,
-        "posts": posts,
-        "cat_selected": 0,
-    }
-    return render(request, "workers/index.html", data)
-
-
-class WorkerHome(TemplateView):
+class WorkerHome(ListView):
     template_name = "workers/index.html"
-    extra_context = {
-        "title": "Главная страница",
-        "menu": menu,
-        "posts": Worker.published.all().select_related("cat"),
-        "cat_selected": 0,
-    }
+    context_object_name = "posts"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["cat_selected"] = int(self.request.GET.get("cat_id", 0))
         context["title"] = "Главная страница"
         context["menu"] = menu
-        context["posts"] = Worker.published.all().select_related("cat")
-        context["cat_selected"] = int(self.request.GET.get("cat_id", 0))
         return context
 
-
-# def handle_uploaded_file(f):
-#     name = f.name
-#     import os
-#     from uuid import uuid4
-#
-#     ext = os.path.splitext(name)[1]
-#     name = str(uuid4()) + ext
-#
-#     with open(f"uploads/{name}", "wb+") as destination:
-#         for chunk in f.chunks():
-#             destination.write(chunk)
-#     return name
+    def get_queryset(self):
+        if cat_id := int(self.request.GET.get("cat_id", 0)):
+            return Worker.published.filter(cat_id=cat_id).select_related("cat")
+        return Worker.published.all().select_related("cat")
 
 
 def create_name_file(name: str):
@@ -79,21 +52,6 @@ def about(request: HttpRequest):
 
     return render(
         request, "workers/about.html", {"title": "О сайте", "menu": menu, "form": form}
-    )
-
-
-def add_page(request: HttpRequest):
-    if request.method == "POST":
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("home")
-    else:
-        form = AddPostForm()
-    return render(
-        request,
-        "workers/addpage.html",
-        {"menu": menu, "title": "Добавление статьи", "form": form},
     )
 
 
@@ -144,18 +102,23 @@ def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
 
-def show_category(request, cat_slug):
-    category = get_object_or_404(Category, slug=cat_slug)
-    posts = Worker.published.filter(cat_id=category.pk).select_related("cat")
+class WomenCategory(ListView):
+    template_name = "workers/index.html"
+    context_object_name = "posts"
+    allow_empty = False
 
-    data = {
-        "title": f"Рубрика : {category.name}",
-        "menu": menu,
-        "posts": posts,
-        "cat_selected": category.pk,
-    }
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat = context["posts"][0].cat
+        context["title"] = "Категория - " + cat.name
+        context["menu"] = menu
+        context["cat_selected"] = cat.id
+        return context
 
-    return render(request, "workers/index.html", data)
+    def get_queryset(self):
+        return Worker.published.filter(
+            cat__slug=self.kwargs["cat_slug"]
+        ).select_related("cat")
 
 
 def show_tag_postlist(request, tag_slug):

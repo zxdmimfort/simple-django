@@ -102,7 +102,7 @@ def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
 
-class WomenCategory(ListView):
+class WorkerCategory(ListView):
     template_name = "workers/index.html"
     context_object_name = "posts"
     allow_empty = False
@@ -121,17 +121,18 @@ class WomenCategory(ListView):
         ).select_related("cat")
 
 
-def show_tag_postlist(request, tag_slug):
-    tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.workers.filter(is_published=Worker.Status.PUBLISHED).select_related(
-        "cat"
-    )
+class WorkerTag(ListView):
+    template_name = "workers/index.html"
+    context_object_name = "posts"
+    allow_empty = False
 
-    data = {
-        "title": f"Тег: {tag.tag}",
-        "menu": menu,
-        "posts": posts,
-        "cat_selected": None,
-    }
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag = TagPost.objects.get(slug=self.kwargs["tag_slug"])
+        context["title"] = "Тег: " + tag.tag
+        context["menu"] = menu
+        context["cat_selected"] = None
+        return context
 
-    return render(request, "workers/index.html", data)
+    def get_queryset(self, *, object_list=None, **kwargs):
+        return Worker.published.filter(tags__slug=self.kwargs["tag_slug"]).select_related("cat")

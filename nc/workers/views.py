@@ -1,11 +1,11 @@
-import uuid
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import ListView, DetailView, FormView
 
 from workers.forms import AddPostForm, UploadFileForm
-from workers.models import Worker, Category, TagPost, UploadFiles
+from workers.models import Worker, TagPost, UploadFiles
 
 menu = [
     {"title": "О сайте", "url_name": "about"},
@@ -85,17 +85,22 @@ def login(request: HttpRequest):
     return HttpResponse("Авторизация")
 
 
-def show_post(request, post_slug):
-    post = get_object_or_404(Worker, slug=post_slug)
+class ShowPost(DetailView):
+    # model = Worker
+    template_name = "workers/post.html"
+    # Задаем параметр пути как в urls
+    slug_url_kwarg = "post_slug"
+    context_object_name = "post"
 
-    data = {
-        "title": post.title,
-        "menu": menu,
-        "post": post,
-        "cat_selected": 1,
-    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = context["post"].title
+        context["menu"] = menu
+        return context
 
-    return render(request, "workers/post.html", context=data)
+    # Для DetailView используем get_object вместо get_queryset
+    def get_object(self, object_list=None):
+        return get_object_or_404(Worker.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
 def page_not_found(request, exception):

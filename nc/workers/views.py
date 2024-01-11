@@ -1,8 +1,15 @@
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    FormView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 
 from workers.forms import AddPostForm, UploadFileForm
 from workers.models import Worker, TagPost, UploadFiles
@@ -15,16 +22,38 @@ menu = [
 ]
 
 
-class WorkerHome(ListView):
+class DataMixin:
+    title_page = None
+    paginate_by = 3
+    extra_context = {}
+
+    def __init__(self):
+        if self.title_page:
+            self.extra_context["title"] = self.title_page
+
+        if "menu" not in self.extra_context:
+            self.extra_context["menu"] = menu
+
+    def get_mixin_context(self, context: dict, **kwargs: dict) -> dict:
+        if self.title_page:
+            context["title"] = self.title_page
+
+        context["menu"] = menu
+        context["cat_selected"] = None
+        context.update(kwargs)
+        return context
+
+
+class WorkerHome(DataMixin, ListView):
     template_name = "workers/index.html"
     context_object_name = "posts"
+    title_page = "Главная страница"
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["cat_selected"] = int(self.request.GET.get("cat_id", 0))
-        context["title"] = "Главная страница"
-        context["menu"] = menu
-        return context
+        return self.get_mixin_context(
+            super().get_context_data(**kwargs),
+            cat_selected=0,
+        )
 
     def get_queryset(self):
         if cat_id := int(self.request.GET.get("cat_id", 0)):
@@ -55,26 +84,16 @@ def about(request: HttpRequest):
     )
 
 
-class AddPage(View):
-    def get(self, request: HttpRequest):
-        form = AddPostForm()
-        return render(
-            request,
-            "workers/addpage.html",
-            {"menu": menu, "title": "Добавление статьи", "form": form},
-        )
+class AddPage(DataMixin, CreateView):
+    form_class = AddPostForm
+    template_name = "workers/addpage.html"
+    success_url = reverse_lazy("home")
+    title_page = "Добавление статьи"
 
-    def post(self, request: HttpRequest):
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("home")
-
-        return render(
-            request,
-            "workers/addpage.html",
-            {"menu": menu, "title": "Добавление статьи", "form": form},
-        )
+    # form_valid нужен только в FormView. В CreateView он уже реализован
+    # def form_valid(self, form):
+    #     form.save()
+    #     return super().form_valid(form)
 
 
 def contact(request: HttpRequest):
@@ -85,7 +104,7 @@ def login(request: HttpRequest):
     return HttpResponse("Авторизация")
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     # model = Worker
     template_name = "workers/post.html"
     # Задаем параметр пути как в urls
@@ -94,20 +113,20 @@ class ShowPost(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = context["post"].title
-        context["menu"] = menu
-        return context
+        return self.get_mixin_context(context, title=context["post"].title)
 
     # Для DetailView используем get_object вместо get_queryset
     def get_object(self, object_list=None):
-        return get_object_or_404(Worker.published, slug=self.kwargs[self.slug_url_kwarg])
+        return get_object_or_404(
+            Worker.published, slug=self.kwargs[self.slug_url_kwarg]
+        )
 
 
 def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
 
-class WorkerCategory(ListView):
+class WorkerCategory(DataMixin, ListView):
     template_name = "workers/index.html"
     context_object_name = "posts"
     allow_empty = False
@@ -115,10 +134,9 @@ class WorkerCategory(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         cat = context["posts"][0].cat
-        context["title"] = "Категория - " + cat.name
-        context["menu"] = menu
-        context["cat_selected"] = cat.id
-        return context
+        return self.get_mixin_context(
+            context, title="Категория - " + cat.name, cat_selected=cat.id
+        )
 
     def get_queryset(self):
         return Worker.published.filter(
@@ -126,7 +144,7 @@ class WorkerCategory(ListView):
         ).select_related("cat")
 
 
-class WorkerTag(ListView):
+class WorkerTag(DataMixin, ListView):
     template_name = "workers/index.html"
     context_object_name = "posts"
     allow_empty = False
@@ -134,10 +152,26 @@ class WorkerTag(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         tag = TagPost.objects.get(slug=self.kwargs["tag_slug"])
-        context["title"] = "Тег: " + tag.tag
-        context["menu"] = menu
-        context["cat_selected"] = None
-        return context
+        return self.get_mixin_context(context, title="Тег: " + tag.tag)
 
     def get_queryset(self, *, object_list=None, **kwargs):
-        return Worker.published.filter(tags__slug=self.kwargs["tag_slug"]).select_related("cat")
+        return Worker.published.filter(
+            tags__slug=self.kwargs["tag_slug"]
+        ).select_related("cat")
+
+
+class UpdatePage(DataMixin, UpdateView):
+    model = Worker
+    form_class = AddPostForm
+    template_name = "workers/addpage.html"
+    slug_url_kwarg = "post_slug"
+    success_url = reverse_lazy("home")
+    title_page = "Редактирование статьи"
+    extra_context = {"editurl": reverse_lazy("edit")}
+
+
+class DeletePage(DeleteView):
+    model = Worker
+    success_url = reverse_lazy("home")
+    slug_url_kwarg = "post_slug"
+    title_page = "Удаление статьи"

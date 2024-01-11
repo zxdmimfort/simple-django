@@ -17,6 +17,7 @@
 
 {% block content %}
     <h1 class="text">{{ title }}</h1>
+    <p><a href="{{ post.get_edit_url }}">Редактировать</a></p>
 
     {% if post.photo %}
         <p><img class="img-article-left" src="{{ post.photo.url }}"></p>

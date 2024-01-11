@@ -1,4 +1,4 @@
-from django.urls import path, re_path, register_converter
+from django.urls import path, register_converter
 from . import views
 from . import converters
 
@@ -14,4 +14,6 @@ urlpatterns = [
     path("post/<slug:post_slug>/", views.ShowPost.as_view(), name="post"),
     path("category/<slug:cat_slug>/", views.WorkerCategory.as_view(), name="category"),
     path("tag/<slug:tag_slug>/", views.WorkerTag.as_view(), name="tag"),
+    path("edit/<slug:post_slug>/", views.UpdatePage.as_view(), name="edit"),
+    path("delete/<slug:post_slug>/", views.DeletePage.as_view(), name="delete"),
 ]

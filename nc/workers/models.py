@@ -92,12 +92,16 @@ class Worker(models.Model):
             models.Index(fields=["-time_create"]),
         ]
 
+    # Можно использовать для автоматического создания slug
     # def save(self, *args, **kwargs):
     #     self.slug = slugify(translit_to_eng(self.title))
     #     super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("post", kwargs={"post_slug": self.slug})
+
+    def get_edit_url(self):
+        return reverse("edit", kwargs={"post_slug": self.slug})
 
     def __str__(self):
         return self.title + str(self.time_create)

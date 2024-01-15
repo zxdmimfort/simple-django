@@ -1,13 +1,14 @@
 from django import template
 import workers.views as views
 from workers.models import Category, TagPost
+from workers.utils import menu
 
 register = template.Library()
 
 
 @register.simple_tag()
-def get_categories():
-    return views.cats_db
+def get_menu():
+    return menu
 
 
 @register.inclusion_tag("workers/list_categories.html")

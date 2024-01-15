@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
@@ -79,6 +80,13 @@ class Worker(models.Model):
     )
     husband = models.OneToOneField(
         "Husband", blank=True, on_delete=models.SET_NULL, null=True, verbose_name="Муж"
+    )
+    author = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="posts",
+        default=None,
     )
 
     objects = models.Manager()

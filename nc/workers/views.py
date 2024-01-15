@@ -1,11 +1,11 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse, reverse_lazy
-from django.views import View
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import (
     ListView,
     DetailView,
-    FormView,
     CreateView,
     UpdateView,
     DeleteView,
@@ -13,13 +13,6 @@ from django.views.generic import (
 
 from workers.forms import AddPostForm, UploadFileForm
 from workers.models import Worker, TagPost, UploadFiles
-
-menu = [
-    {"title": "О сайте", "url_name": "about"},
-    {"title": "Добавить статью", "url_name": "add_page"},
-    {"title": "Обратная связь", "url_name": "contact"},
-    {"title": "Войти", "url_name": "login"},
-]
 
 
 class DataMixin:
@@ -31,14 +24,10 @@ class DataMixin:
         if self.title_page:
             self.extra_context["title"] = self.title_page
 
-        if "menu" not in self.extra_context:
-            self.extra_context["menu"] = menu
-
     def get_mixin_context(self, context: dict, **kwargs: dict) -> dict:
         if self.title_page:
             context["title"] = self.title_page
 
-        context["menu"] = menu
         context["cat_selected"] = None
         context.update(kwargs)
         return context
@@ -70,6 +59,7 @@ def create_name_file(name: str):
     return name
 
 
+@login_required
 def about(request: HttpRequest):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
@@ -79,21 +69,25 @@ def about(request: HttpRequest):
     else:
         form = UploadFileForm()
 
+    from workers.utils import menu
+
     return render(
         request, "workers/about.html", {"title": "О сайте", "menu": menu, "form": form}
     )
 
 
-class AddPage(DataMixin, CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = "workers/addpage.html"
     success_url = reverse_lazy("home")
     title_page = "Добавление статьи"
 
     # form_valid нужен только в FormView. В CreateView он уже реализован
-    # def form_valid(self, form):
-    #     form.save()
-    #     return super().form_valid(form)
+    # Или для добавления автора
+    def form_valid(self, form):
+        w = form.save(commit=False)
+        w.author = self.request.user
+        return super().form_valid(form)
 
 
 def contact(request: HttpRequest):

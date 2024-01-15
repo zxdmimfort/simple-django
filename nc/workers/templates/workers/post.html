@@ -17,6 +17,7 @@
 
 {% block content %}
     <h1 class="text">{{ title }}</h1>
+    <p>Автор: {{ post.author.username|default:"No name" }}</p>
     <p><a href="{{ post.get_edit_url }}">Редактировать</a></p>
 
     {% if post.photo %}

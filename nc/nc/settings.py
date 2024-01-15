@@ -68,6 +68,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "users.context_processors.get_worker_context",
             ],
         },
     },
@@ -103,6 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = "home"
+LOGIN_URL = "users:login"
+LOGOUT_REDIRECT_URL = "home"
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 

@@ -2,12 +2,16 @@
 
 {% block content %}
     <h1>Регистрация</h1>
-    
+
     <form method="post">
-        <input type="hidden" name="next" value="{{ next }}"/>
         {% csrf_token %}
-        {{ form.as_p }}
+        <input type="hidden" name="next" value="{{ next }}"/>
+        <div class="form-error">{{ form.non_field_errors }}</div>
+        {% for f in form %}
+        	<p><label class="form-error" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}</p>
+            <div class="form-error">{{ f.errors }}</div>
+        {% endfor %}
         <p><button type="submit">Подтвердить</button></p>
     </form>
-    
+
 {% endblock %}

@@ -107,7 +107,7 @@ class ShowPost(DataMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        return self.get_mixin_context(context, title=context["post"].title)
+        return self.get_mixin_context(context, title=context["post"].title, edit_url=reverse_lazy("edit", kwargs={"post_slug": self.kwargs["post_slug"]}))
 
     # Для DetailView используем get_object вместо get_queryset
     def get_object(self, object_list=None):
@@ -154,17 +154,16 @@ class WorkerTag(DataMixin, ListView):
         ).select_related("cat")
 
 
-class UpdatePage(DataMixin, UpdateView):
+class UpdatePage(LoginRequiredMixin, DataMixin, UpdateView):
     model = Worker
     form_class = AddPostForm
     template_name = "workers/addpage.html"
     slug_url_kwarg = "post_slug"
     success_url = reverse_lazy("home")
     title_page = "Редактирование статьи"
-    extra_context = {"editurl": reverse_lazy("edit")}
 
 
-class DeletePage(DeleteView):
+class DeletePage(LoginRequiredMixin, DeleteView):
     model = Worker
     success_url = reverse_lazy("home")
     slug_url_kwarg = "post_slug"

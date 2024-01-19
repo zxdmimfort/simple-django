@@ -108,9 +108,6 @@ class Worker(models.Model):
     def get_absolute_url(self):
         return reverse("post", kwargs={"post_slug": self.slug})
 
-    def get_edit_url(self):
-        return reverse("edit", kwargs={"post_slug": self.slug})
-
     def __str__(self):
         return self.title + str(self.time_create)
 

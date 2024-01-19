@@ -19,15 +19,13 @@
         <li><a class="text header-text" href="{% url m.url_name %}">{{ m.title }}</a></li>
         {% endfor %}
         {% if user.is_authenticated %}
-        <li class="last text header-text"> {{ user.username }} | <a href="{% url 'users:logout' %}" class="text header-text">Выйти</a></li>
+        <li class="last text header-text"><a href="{% url 'users:profile' %}" class="text header-text">{{ user.username }}</a> | <a href="{% url 'users:logout' %}" class="text header-text">Выйти</a></li>
         {% else %}
         <li class="last"><a href="{% url 'users:login' %}" class="text header-text">Войти</a> | <a href="{% url "users:register" %}" class="text header-text">Регистрация</a></li>
         {% endif %}
     </ul>
 </header>
 {% endblock mainmenu %}
-
-{#{% get_categories as categories %}#}
 
 <div class="main">
     <ul id="left-chapters">

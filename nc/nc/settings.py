@@ -104,6 +104,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users.authentication.EmailAuthBackend',
+]
+
 LOGIN_REDIRECT_URL = "home"
 LOGIN_URL = "users:login"
 LOGOUT_REDIRECT_URL = "home"

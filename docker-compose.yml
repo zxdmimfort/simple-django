@@ -1,0 +1,27 @@
+services:
+  web:
+    build:
+      context: nc
+      target: builder
+    command: python manage.py runserver 0.0.0.0:80
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nc/:/app/
+    env_file:
+      - ./nc/.env.dev
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    ports:
+      - '5434:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hello_django
+      - POSTGRES_PASSWORD=hello_django
+      - POSTGRES_DB=hello_django_dev
+      - DATABASE=postgres
+volumes:
+  postgres_data:

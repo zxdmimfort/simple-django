@@ -107,7 +107,13 @@ class ShowPost(DataMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        return self.get_mixin_context(context, title=context["post"].title, edit_url=reverse_lazy("edit", kwargs={"post_slug": self.kwargs["post_slug"]}))
+        return self.get_mixin_context(
+            context,
+            title=context["post"].title,
+            edit_url=reverse_lazy(
+                "edit", kwargs={"post_slug": self.kwargs["post_slug"]}
+            ),
+        )
 
     # Для DetailView используем get_object вместо get_queryset
     def get_object(self, object_list=None):

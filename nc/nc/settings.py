@@ -121,7 +121,7 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "users.authentication.EmailAuthBackend",
 ]
-
+AUTH_USER_MODEL = "users.User"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("SMTP_HOST", "smtp.gmail.com")
 EMAIL_PORT = os.environ.get("SMTP_PORT", 465)
@@ -158,6 +158,7 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+DEFAULT_USER_IMAGE_URL = MEDIA_URL + "users/default.png"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

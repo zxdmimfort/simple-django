@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
+from nc import settings
 from users.forms import (
     LoginUserForm,
     RegisterUserForm,
@@ -47,7 +48,10 @@ class ProfileUser(LoginRequiredMixin, UpdateView):
     template_name = "users/profile.html"
     model = get_user_model()
     form_class = ProfileUserForm
-    extra_context = {"title": "Профиль пользователя"}
+    extra_context = {
+        "title": "Профиль пользователя",
+        "default_image": settings.DEFAULT_USER_IMAGE_URL,
+    }
 
     def get_object(self, queryset=None):
         return self.request.user

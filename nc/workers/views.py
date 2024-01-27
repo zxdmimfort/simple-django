@@ -81,7 +81,7 @@ class AddPage(PermissionRequiredMixin, DataMixin, CreateView):
     template_name = "workers/addpage.html"
     success_url = reverse_lazy("home")
     title_page = "Добавление статьи"
-    permission_required = "workers.add_worker" # <application>.<action>_<table>
+    permission_required = "workers.add_worker"  # <application>.<action>_<table>
 
     # form_valid нужен только в FormView. В CreateView он уже реализован
     # Или для добавления автора

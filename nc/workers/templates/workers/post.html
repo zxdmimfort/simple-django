@@ -18,7 +18,10 @@
 {% block content %}
     <h1 class="text">{{ title }}</h1>
     <p>Автор: {{ post.author.username|default:"No name" }}</p>
+    
+    {% if perms.workers.change_worker %}
     <p><a href="{{ edit_url }}">Редактировать</a></p>
+    {% endif %}
 
     {% if post.photo %}
         <p><img class="img-article-left" src="{{ post.photo.url }}"></p>

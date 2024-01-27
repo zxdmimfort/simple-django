@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
@@ -12,7 +12,7 @@ from django.views.generic import (
 )
 
 from workers.forms import AddPostForm, UploadFileForm
-from workers.models import Worker, TagPost, UploadFiles
+from workers.models import Worker, TagPost, UploadFiles, Category
 
 
 class DataMixin:
@@ -76,11 +76,12 @@ def about(request: HttpRequest):
     )
 
 
-class AddPage(LoginRequiredMixin, DataMixin, CreateView):
+class AddPage(PermissionRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = "workers/addpage.html"
     success_url = reverse_lazy("home")
     title_page = "Добавление статьи"
+    permission_required = "workers.add_worker" # <application>.<action>_<table>
 
     # form_valid нужен только в FormView. В CreateView он уже реализован
     # Или для добавления автора
@@ -90,6 +91,7 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
         return super().form_valid(form)
 
 
+@permission_required(perm="workers.view_worker", raise_exception=True)
 def contact(request: HttpRequest):
     return HttpResponse("Обратная связь")
 
@@ -129,11 +131,12 @@ def page_not_found(request, exception):
 class WorkerCategory(DataMixin, ListView):
     template_name = "workers/index.html"
     context_object_name = "posts"
-    allow_empty = False
+    allow_empty = True
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        cat = context["posts"][0].cat
+        # cat = context["posts"][0].cat
+        cat = get_object_or_404(Category.objects, slug=self.kwargs["cat_slug"])
         return self.get_mixin_context(
             context, title="Категория - " + cat.name, cat_selected=cat.id
         )
@@ -160,13 +163,14 @@ class WorkerTag(DataMixin, ListView):
         ).select_related("cat")
 
 
-class UpdatePage(LoginRequiredMixin, DataMixin, UpdateView):
+class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
     model = Worker
     form_class = AddPostForm
     template_name = "workers/addpage.html"
     slug_url_kwarg = "post_slug"
     success_url = reverse_lazy("home")
     title_page = "Редактирование статьи"
+    permission_required = "workers.change_worker"
 
 
 class DeletePage(LoginRequiredMixin, DeleteView):

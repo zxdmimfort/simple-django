@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1 class="text">{{ title }}</h1>
-    <ul>
+    <h1 class="display-4">{{ title }}</h1>
+    <div class="list-group">
         {% for p in page_obj %}
-            <li>
-                <div class="article-panel">
-                    <p class="first text">Категория: {{ p.cat }} | Автор: {{ p.author.username|default:"No name" }}</p>
-                    <p class="last text">Дата: {{ p.time_update|date:"d-m-Y H:i:s" }}</p>
+            <div class="list-group-item">
+                <h2 class="text title header-text">{{ p.title }}</h2>
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Категория: {{ p.cat }} | Автор: {{ p.author.username|default:"No name" }}</h5>
+                    <small>Дата: {{ p.time_update|date:"d-m-Y H:i:s" }}</small>
                 </div>
                 {% if p.photo %}
-                    <p><img class="img-article-left thumb" src="{{ p.photo.url }}"></p>
+                    <p class="mb-1"><img class="img-fluid rounded" src="{{ p.photo.url }}"></p>
                 {% endif %}
-                <h2 class="text title header-text">{{ p.title }}</h2>
                 <div class="text">{{ p.content|linebreaks|truncatewords:50 }}</div>
                 <p class="link-read-post"><a href="{{ p.get_absolute_url }}">Читать пост</a></p>
-            </li>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}
 
 {% block navigation %}
@@ -27,11 +27,11 @@
                 <a href="?page={{ page_obj.previous_page_number }}">previous</a>
             {% endif %}
         </span>
-    
+
         <span class="current">
             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
         </span>
-    
+
         {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}">next</a>
             <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>

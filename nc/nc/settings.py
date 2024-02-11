@@ -29,7 +29,7 @@ DEBUG = os.environ.get("DEBUG", True)
 ALLOWED_HOSTS = os.environ.get(
     "DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]"
 ).split(" ")
-INTERNAL_IPS = ["127.0.0.1"]
+# INTERNAL_IPS = ["127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ["https://scvready.online"]
 
 if not DEBUG:

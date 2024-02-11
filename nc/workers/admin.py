@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.utils.safestring import mark_safe
 
-from workers.models import Worker, Category
+from workers.models import Worker, Category, TagPost
 
 
 class MarriedFilter(admin.SimpleListFilter):
@@ -72,3 +72,10 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ("id", "name")
     list_display_links = ("id", "name")
+
+@admin.register(TagPost)
+class TagPostAdmin(admin.ModelAdmin):
+    fields = ["tag", "slug"]
+    prepopulated_fields = {"slug": ("tag",)}
+    list_display = ("id", "tag")
+    list_display_links = ("id", "tag")

@@ -14,5 +14,6 @@
         <p><button type="submit">Войти</button></p>
     </form>
     <p><a href="{% url 'users:password_reset' %}">Забыли пароль?</a></p
-    <p><a href="{% url 'social:begin' 'github' %}"><img src="/media/social-auth/github.png" alt=""></a></p>
+    <p><a href="{% url 'social:begin' 'github' %}"><img src="/media/social-auth/github.png" width="180px"></a></p>
+    <p><a href="{% url 'social:begin' 'vk-oauth2' %}"><img src="/media/social-auth/vk.png" width="180px"></a></p>
 {% endblock %}

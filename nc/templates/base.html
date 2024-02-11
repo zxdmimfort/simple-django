@@ -3,52 +3,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ title }}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'workers/reset.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'workers/style.css' %}"/>
-    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
-{% block mainmenu %}
-<header>
-    <ul id="mainmenu" class="mainmenu">
-        <li><a class="text header-text" href="{% url 'home' %}">Главная</a></li>
-        {% get_menu as menu %}
-        {% for m in menu %}
-        <li><a class="text header-text" href="{% url m.url_name %}">{{ m.title }}</a></li>
-        {% endfor %}
-        {% if user.is_authenticated %}
-        <li class="last text header-text"><a href="{% url 'users:profile' %}" class="text header-text">{{ user.username }}</a> | <a href="{% url 'users:logout' %}" class="text header-text">Выйти</a></li>
-        {% else %}
-        <li class="last"><a href="{% url 'users:login' %}" class="text header-text">Войти</a> | <a href="{% url "users:register" %}" class="text header-text">Регистрация</a></li>
-        {% endif %}
-    </ul>
-</header>
-{% endblock mainmenu %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">Главная</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% get_menu as menu %}
+                    {% for m in menu %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url m.url_name %}">{{ m.title }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:profile' %}">{{ user.username }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:logout' %}">Выйти</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:login' %}">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:register' %}">Регистрация</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-<div class="main">
-    <ul id="left-chapters">
-        {% if cat_selected == 0 %}
-            <li class="selected text">Все категории</li>
-        {% else %}
-            <li><a class="text" href="{% url 'home' %}">Все категории</a></li>
-        {% endif %}
-
-
-        {% show_categories cat_selected %}
-
-        <li class="share">
-            <p class="text">Наш канал <a class="share-yt text" href="..." target="_blank" rel="nofollow">youtube</a></p>
-        </li>
-        <li>{% show_all_tags %}</li>
-    </ul>
-
-    <div class="main-center text">
-        {% block breadcrumbs %} {% endblock %}
-        {% block content %} {% endblock %}
-        {% block navigation %} {% endblock %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <ul class="list-group">
+                    {% if cat_selected == 0 %}
+                        <li class="list-group-item active">Все категории</li>
+                    {% else %}
+                        <li class="list-group-item"><a href="{% url 'home' %}">Все категории</a></li>
+                    {% endif %}
+                    {% show_categories cat_selected %}
+                    <li class="list-group-item">
+                        <p class="text">Наш канал <a href="..." target="_blank" rel="nofollow">youtube</a></p>
+                    </li>
+                    <li class="list-group-item">{% show_all_tags %}</li>
+                </ul>
+            </div>
+            <div class="col-md-9">
+                {% block breadcrumbs %} {% endblock %}
+                {% block content %} {% endblock %}
+                {% block navigation %} {% endblock %}
+            </div>
+        </div>
     </div>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-7aThvCh9TypR7fIc2HV4O/nFMVCBwyIUKL8XCtKE+8xmuB5ZJ1K96Cx1KoGJ0bPb" crossorigin="anonymous"></script>
 </body>
 </html>

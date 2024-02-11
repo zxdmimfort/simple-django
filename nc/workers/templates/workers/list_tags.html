@@ -1,8 +1,8 @@
 {% if tags %}
     <p class="text">Теги:</p>
-    <ul class="tags-list">
+    <ul class="list-group">
         {% for t in tags %}
-            <li><a href="{{ t.get_absolute_url }}">{{ t.tag }}</a></li>
+            <li class="list-group-item"><a href="{{ t.get_absolute_url }}">{{ t.tag }}</a></li>
         {% endfor %}
     </ul>
 {% endif %}

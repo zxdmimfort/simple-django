@@ -1,27 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    
-    <h1>Профиль</h1>
- 
+    <h1 class="display-4">Профиль</h1>
+
     <form method="post" enctype="multipart/form-data">
-    
         {% csrf_token %}
         {% if user.photo %}
-            <p><img src="{{ user.photo.url }}"></p>
+            <p><img class="img-fluid rounded-circle" src="{{ user.photo.url }}"></p>
         {% else %}
-            <p><img src="/media/users/default.png"></p>
+            <p><img class="img-fluid rounded-circle" src="/media/users/default.png"></p>
         {% endif %}
-        <div class="form-error">{{ form.non_field_errors }}</div>
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
         {% for f in form %}
-            <p><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
-            <div class="form-error">{{ f.errors }}</div>
+            <div class="mb-3">
+                <label for="{{ f.id_for_label }}" class="form-label">{{f.label}}: </label>
+                {{ f }}
+                <div class="form-text text-danger">
+                    {{ f.errors }}
+                </div>
+            </div>
         {% endfor %}
-     
-        <p><button type="submit">Сохранить</button></p>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
     </form>
-{% if not perms.users.social_auth %}
- <hr>
-    <p><a href="{% url 'users:password_change' %}">Сменить пароль</a></p>
-{% endif %}
+    {% if not perms.users.social_auth %}
+        <hr>
+        <p><a class="btn btn-link" href="{% url 'users:password_change' %}">Сменить пароль</a></p>
+    {% endif %}
 {% endblock %}

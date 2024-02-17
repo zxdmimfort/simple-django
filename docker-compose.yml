@@ -1,8 +1,6 @@
 services:
   web:
-    build:
-      context: nc
-      target: builder
+    image: zxdmimfort/simple_django:latest
     command: python manage.py runserver 0.0.0.0:80
     ports:
       - "8000:80"

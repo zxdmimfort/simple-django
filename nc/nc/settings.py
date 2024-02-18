@@ -104,6 +104,14 @@ DATABASES = {
         "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
+
+CASHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{os.environ.get('REDIS_HOST', 'redis')}:{os.environ.get('REDIS_PORT', '6379')}"
+    }
+}
+
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_GITHUB_KEY = os.getenv("GITHUB_KEY")
 SOCIAL_AUTH_GITHUB_SECRET = os.getenv("GITHUB_SECRET")

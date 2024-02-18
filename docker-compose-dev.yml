@@ -24,6 +24,7 @@ services:
       - db
       - watchtower
   db:
+    container_name: simple_django_db
     image: postgres:15
     ports:
       - '5434:5432'

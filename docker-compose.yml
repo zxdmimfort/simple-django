@@ -1,5 +1,6 @@
 services:
   web:
+    container_name: simple_django_web
     build:
       context: nc
       target: builder
@@ -12,7 +13,9 @@ services:
       - ./nc/.env.dev
     depends_on:
       - db
+      - redis
   db:
+    container_name: simple_django_db
     image: postgres:15
     ports:
       - '5434:5432'
@@ -23,5 +26,8 @@ services:
       - POSTGRES_PASSWORD=hello_django
       - POSTGRES_DB=hello_django_dev
       - DATABASE=postgres
+  redis:
+    container_name: simple_django_redis
+    image: redis:latest
 volumes:
   postgres_data:

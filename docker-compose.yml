@@ -18,7 +18,7 @@ services:
     container_name: simple_django_db
     image: postgres:15
     ports:
-      - '5434:5432'
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -29,5 +29,7 @@ services:
   redis:
     container_name: simple_django_redis
     image: redis:latest
+    ports:
+      - '6379:6379'
 volumes:
   postgres_data:

@@ -51,5 +51,7 @@ class UploadFileForm(forms.Form):
 class ContactForm(forms.Form):
     name = forms.CharField(label="Имя", max_length=255)
     email = forms.EmailField(label="Email")
-    content = forms.CharField(label="Содержимое", widget=forms.Textarea(attrs={"cols": 60, "rows": 10}))
+    content = forms.CharField(
+        label="Содержимое", widget=forms.Textarea(attrs={"cols": 60, "rows": 10})
+    )
     captcha = CaptchaField()

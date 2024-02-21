@@ -1,18 +1,28 @@
 services:
+  watchtower:
+    image: containrrr/watchtower
+    env_file:
+      - ./watchtower.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 300 --debug --http-api-update --http-api-periodic-polls
+    ports:
+      - 54321:8080
   web:
     container_name: simple_django_web
-    build:
-      context: nc
-      target: builder
+    image: zxdmimfort/simple_django:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     command: python manage.py runserver 0.0.0.0:80
     ports:
       - "8000:80"
     volumes:
-      - ./nc/:/app/
+      - ./nc/media:/app/media
     env_file:
       - ./nc/.env.dev
     depends_on:
       - db
+      - watchtower
       - redis
   db:
     container_name: simple_django_db

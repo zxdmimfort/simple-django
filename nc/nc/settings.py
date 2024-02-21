@@ -29,7 +29,11 @@ DEBUG = os.environ.get("DEBUG", True)
 ALLOWED_HOSTS = os.environ.get(
     "DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]"
 ).split(" ")
-# INTERNAL_IPS = ["127.0.0.1"]
+if DEBUG:
+    import socket  # only if you haven't already imported this
+
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ["https://scvready.online"]
 
 if not DEBUG:
@@ -52,17 +56,24 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "debug_toolbar",
     "social_django",
+    "captcha",
+    "django.contrib.sites",
+    "django.contrib.sitemaps",
 ]
 
+SITE_ID = 1
+
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.middleware.cache.FetchFromCacheMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "nc.urls"
@@ -103,6 +114,18 @@ DATABASES = {
         "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{os.environ.get('REDIS_HOST', 'redis')}:{os.environ.get('REDIS_PORT', '6379')}",
+    }
+}
+
+CACHE_MIDDLEWARE_ALIAS = "default"
+CACHE_MIDDLEWARE_SECONDS = 15
+CACHE_MIDDLEWARE_KEY_PREFIX = "nc"
+
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_GITHUB_KEY = os.getenv("GITHUB_KEY")
 SOCIAL_AUTH_GITHUB_SECRET = os.getenv("GITHUB_SECRET")
@@ -146,7 +169,9 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "users.authentication.EmailAuthBackend",
 ]
+
 AUTH_USER_MODEL = "users.User"
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("SMTP_HOST", "smtp.gmail.com")
 EMAIL_PORT = os.environ.get("SMTP_PORT", 465)
@@ -157,6 +182,7 @@ EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
+
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_GITHUB_KEY = os.getenv("GITHUB_KEY")
 SOCIAL_AUTH_GITHUB_SECRET = os.getenv("GITHUB_SECRET")
@@ -177,6 +203,9 @@ SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.social_auth.load_extra_data",
     "social_core.pipeline.user.user_details",
 )
+
+CAPTCHA_FONT_SIZE = 48
+CAPTCHA_LENGTH = 6
 
 LOGIN_REDIRECT_URL = "home"
 LOGIN_URL = "users:login"

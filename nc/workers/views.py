@@ -9,9 +9,10 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
+    FormView,
 )
 
-from workers.forms import AddPostForm, UploadFileForm
+from workers.forms import AddPostForm, UploadFileForm, ContactForm
 from workers.models import Worker, TagPost, UploadFiles, Category
 
 
@@ -39,9 +40,11 @@ class WorkerHome(DataMixin, ListView):
     title_page = "Главная страница"
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
         return self.get_mixin_context(
             super().get_context_data(**kwargs),
             cat_selected=0,
+            page=self.request.GET.get("page"),
         )
 
     def get_queryset(self):
@@ -91,11 +94,6 @@ class AddPage(PermissionRequiredMixin, DataMixin, CreateView):
         return super().form_valid(form)
 
 
-@permission_required(perm="workers.view_worker", raise_exception=True)
-def contact(request: HttpRequest):
-    return HttpResponse("Обратная связь")
-
-
 def login(request: HttpRequest):
     return HttpResponse("Авторизация")
 
@@ -138,7 +136,9 @@ class WorkerCategory(DataMixin, ListView):
         # cat = context["posts"][0].cat
         cat = get_object_or_404(Category.objects, slug=self.kwargs["cat_slug"])
         return self.get_mixin_context(
-            context, title="Категория - " + cat.name, cat_selected=cat.id
+            context,
+            title="Категория - " + cat.name,
+            cat_selected=cat.id,
         )
 
     def get_queryset(self):
@@ -178,3 +178,14 @@ class DeletePage(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("home")
     slug_url_kwarg = "post_slug"
     title_page = "Удаление статьи"
+
+
+class ContactFormView(LoginRequiredMixin, DataMixin, FormView):
+    form_class = ContactForm
+    template_name = "workers/contact.html"
+    success_url = reverse_lazy("home")
+    title_page = "Обратная связь"
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)

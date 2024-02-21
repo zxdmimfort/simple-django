@@ -1,5 +1,7 @@
 {% load static %}
 {% load workers_tags %}
+{% load cache %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,6 +47,7 @@
 
     <div class="container">
         <div class="row">
+{#            {% cache 10 sidebar cat_selected %}#}
             <div class="col-md-3">
                 <ul class="list-group">
                     {% if cat_selected == 0 %}
@@ -59,6 +62,7 @@
                     <li class="list-group-item">{% show_all_tags %}</li>
                 </ul>
             </div>
+{#            {% endcache %}#}
             <div class="col-md-9">
                 {% block breadcrumbs %} {% endblock %}
                 {% block content %} {% endblock %}

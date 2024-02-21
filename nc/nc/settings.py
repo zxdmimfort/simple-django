@@ -57,7 +57,11 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "social_django",
     "captcha",
+    "django.contrib.sites",
+    "django.contrib.sitemaps",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",

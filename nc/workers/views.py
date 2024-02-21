@@ -8,7 +8,8 @@ from django.views.generic import (
     DetailView,
     CreateView,
     UpdateView,
-    DeleteView, FormView,
+    DeleteView,
+    FormView,
 )
 
 from workers.forms import AddPostForm, UploadFileForm, ContactForm
@@ -39,9 +40,11 @@ class WorkerHome(DataMixin, ListView):
     title_page = "Главная страница"
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
         return self.get_mixin_context(
             super().get_context_data(**kwargs),
             cat_selected=0,
+            page=self.request.GET.get("page"),
         )
 
     def get_queryset(self):
@@ -133,7 +136,9 @@ class WorkerCategory(DataMixin, ListView):
         # cat = context["posts"][0].cat
         cat = get_object_or_404(Category.objects, slug=self.kwargs["cat_slug"])
         return self.get_mixin_context(
-            context, title="Категория - " + cat.name, cat_selected=cat.id
+            context,
+            title="Категория - " + cat.name,
+            cat_selected=cat.id,
         )
 
     def get_queryset(self):

@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% load cache %}
 {% block content %}
+{#    {% cache 30 page cat_selected %}#}
     <h1 class="display-4">{{ title }}</h1>
     <div class="list-group">
         {% for p in page_obj %}
@@ -17,6 +19,7 @@
             </div>
         {% endfor %}
     </div>
+{#{% endcache %}#}
 {% endblock %}
 
 {% block navigation %}

@@ -3,5 +3,5 @@ venv
 __pycache__/
 db.sqlite3
 media/
-nc/.env.*
+nc/.env*
 nc/db.json

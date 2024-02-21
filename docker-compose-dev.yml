@@ -23,6 +23,7 @@ services:
     depends_on:
       - db
       - watchtower
+      - redis
   db:
     container_name: simple_django_db
     image: postgres:15
@@ -35,5 +36,10 @@ services:
       - POSTGRES_PASSWORD=hello_django
       - POSTGRES_DB=hello_django_dev
       - DATABASE=postgres
+  redis:
+    container_name: simple_django_redis
+    image: redis:latest
+    ports:
+      - '6379:6379'
 volumes:
   postgres_data:

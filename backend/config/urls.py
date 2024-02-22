@@ -1,5 +1,5 @@
 """
-URL configuration for nc project.
+URL configuration for backend project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -20,7 +20,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 from django.views.decorators.cache import cache_page
 
-from nc import settings
+from config import settings
 from workers.models import Worker
 from workers.sitemaps import PostSitemap, CategorySitemap
 from workers.views import page_not_found

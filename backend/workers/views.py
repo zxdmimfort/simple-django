@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     ListView,
@@ -79,12 +79,11 @@ def about(request: HttpRequest):
     )
 
 
-class AddPage(PermissionRequiredMixin, DataMixin, CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = "workers/addpage.html"
     success_url = reverse_lazy("home")
     title_page = "Добавление статьи"
-    permission_required = "workers.add_worker"  # <application>.<action>_<table>
 
     # form_valid нужен только в FormView. В CreateView он уже реализован
     # Или для добавления автора
@@ -163,21 +162,34 @@ class WorkerTag(DataMixin, ListView):
         ).select_related("cat")
 
 
-class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
+class UpdatePage(DataMixin, UpdateView):
     model = Worker
     form_class = AddPostForm
     template_name = "workers/addpage.html"
     slug_url_kwarg = "post_slug"
     success_url = reverse_lazy("home")
     title_page = "Редактирование статьи"
-    permission_required = "workers.change_worker"
+
+    def dispatch(self, request, *args, **kwargs):
+        post_slug = self.kwargs.get("post_slug")
+        post = get_object_or_404(Worker, slug=post_slug)
+        if post.author != request.user:
+            return redirect("post", post_slug)
+        return super().dispatch(request, *args, **kwargs)
 
 
-class DeletePage(LoginRequiredMixin, DeleteView):
+class DeletePage(DeleteView):
     model = Worker
     success_url = reverse_lazy("home")
     slug_url_kwarg = "post_slug"
     title_page = "Удаление статьи"
+
+    def dispatch(self, request, *args, **kwargs):
+        post_slug = self.kwargs.get("post_slug")
+        post = get_object_or_404(Worker, slug=post_slug)
+        if post.author != request.user:
+            return redirect("post", post_slug)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ContactFormView(LoginRequiredMixin, DataMixin, FormView):

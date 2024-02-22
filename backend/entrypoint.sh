@@ -14,6 +14,6 @@ fi
 #python manage.py flush --no-input
 python manage.py migrate
 #python manage.py loaddata ./db.json
-python manage.py shell < ./nc/create_superuser.py
+python manage.py shell < ./config/create_superuser.py
 
 exec "$@"

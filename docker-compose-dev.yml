@@ -17,9 +17,9 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./nc/media:/app/media
+      - ./backend/media:/app/media
     env_file:
-      - ./nc/.env.dev
+      - backend/.env.dev
     depends_on:
       - db
       - watchtower

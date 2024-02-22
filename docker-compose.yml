@@ -2,15 +2,15 @@ services:
   web:
     container_name: simple_django_web
     build:
-      context: nc
+      context: backend
       target: builder
     command: python manage.py runserver 0.0.0.0:80
     ports:
       - "8000:80"
     volumes:
-      - ./nc/:/app/
+      - ./backend/:/app/
     env_file:
-      - ./nc/.env.dev
+      - backend/.env.dev
     depends_on:
       - db
       - redis

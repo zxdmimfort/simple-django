@@ -18,7 +18,7 @@ pipeline {
         stage("create docker image") {
             steps {
                 echo "=========== start building image ==========="
-                dir ('nc') {
+                dir ('backend') {
                     sh 'docker build -t zxdmimfort/simple_django:latest .'
                 }
             }

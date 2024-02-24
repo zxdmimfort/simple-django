@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
-from config import settings
+from config.settings import settings
 from users.forms import (
     LoginUserForm,
     RegisterUserForm,

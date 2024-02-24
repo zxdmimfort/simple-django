@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
+print("===========Root user create; Social group create========")
 User = get_user_model()
 if not (User.objects.filter(username="root")):
     user = User.objects.create_superuser("root", "root@root.root", "root")

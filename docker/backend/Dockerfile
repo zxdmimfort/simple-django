@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-RUN chmod +x /app/entrypoint.sh
-ENTRYPOINT ["/app/entrypoint.sh"]
+COPY ./backend ./backend
+WORKDIR /app/backend
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]

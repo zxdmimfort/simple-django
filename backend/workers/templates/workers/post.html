@@ -3,29 +3,54 @@
 <!-- Теги -->
 {% with post.tags.all as tags %}
 {% if tags %}
-    <div></div>
-    <ul class="tags-list">
-        <li class="text">Теги:</li>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item"><a href="{{ post.cat.get_absolute_url }}">{{ post.cat }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+        </ol>
+    </nav>
+    <div class="d-flex flex-wrap">
         {% for t in tags %}
-        <li><a href="{{ t.get_absolute_url }}">{{ t.tag }}</a></li>
+        <span class="badge bg-secondary m-1"><a href="{{ t.get_absolute_url }}" class="text-decoration-none text-white">{{ t.tag }}</a></span>
         {% endfor %}
-    </ul>
+    </div>
 {% endif %}
 {% endwith %}
 {% endblock %}
 
 
 {% block content %}
-    <h1 class="text">{{ title }}</h1>
-    <p>Автор: {{ post.author.username|default:"No name" }}</p>
-    
-    {% if perms.workers.change_worker %}
-    <p><a href="{{ edit_url }}">Редактировать</a></p>
-    {% endif %}
+    <div class="container">
+        <h1 class="display-4">{{ title }}</h1>
+        <p class="lead">Автор: {{ post.author.username|default:"No name" }}</p>
 
-    {% if post.photo %}
-        <p><img class="img-article-left" src="{{ post.photo.url }}"></p>
-    {% endif %}
+        {% if perms.workers.change_worker %}
+        <p><a href="{{ edit_url }}" class="btn btn-primary">Редактировать</a></p>
+        {% endif %}
 
-    <div class="text">{{ post.content|linebreaks }}</div>
+        <div class="card mb-3">
+            {% if post.photo %}
+                <img src="{{ post.photo.url }}" class="card-img-top" alt="{{ post.title }}">
+            {% endif %}
+            <div class="card-body">
+                <div class="text">{{ post.content|linebreaks }}</div>
+            </div>
+        </div>
+        <!-- Секция комментариев -->
+        <div class="comments-section">
+            <h2>Комментарии</h2>
+            <p><a href="{{ edit_url }}" class="btn btn-primary">Редактировать</a></p>
+            {% for comment in post.comments.all %}
+                <div class="media mb-3">
+                    <div class="media-body">
+                        <h5 class="mt-0">{{ comment.author.username }}:</h5>
+                        <p>{{ comment.text }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Пока нет комментариев.</p>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

@@ -3,7 +3,6 @@ from .base import *
 DEBUG = False
 ALLOWED_HOSTS = ["scvready.online", "www.scvready.online"]
 
-DATABASES = {"default": {"ENGINE": "django.db.backends.postgresql", "NAME": ""}}
 
 STATIC_ROOT = BASE_DIR / "static/"
 

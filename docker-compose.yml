@@ -1,16 +1,32 @@
 services:
-  web:
-    container_name: simple_django_web
+  nginx:
+    container_name: nginx
+    restart: always
     build:
-      context: backend
-      target: builder
-    command: python manage.py runserver 0.0.0.0:80
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    volumes:
+      - ./static/:/app/static/
+      - ./backend/media/:/app/media/
     ports:
       - "8000:80"
-    volumes:
-      - ./backend/:/app/
+    depends_on:
+      - web
+  web:
+    container_name: simple_django_web
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
     env_file:
-      - backend/.env.dev
+      - ./backend/.env
+    volumes:
+      - ./static/:/app/static
+      - ./backend/media/:/app/media/
     depends_on:
       - db
       - redis
@@ -25,7 +41,6 @@ services:
       - POSTGRES_USER=hello_django
       - POSTGRES_PASSWORD=hello_django
       - POSTGRES_DB=hello_django_dev
-      - DATABASE=postgres
   redis:
     container_name: simple_django_redis
     image: redis:latest

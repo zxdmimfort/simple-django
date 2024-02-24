@@ -1,6 +1,8 @@
 .venv
 .idea
 __pycache__/
-media/
+backend/media/
+static/
+
 backend/.env*
 backend/db.json

@@ -18,8 +18,8 @@ pipeline {
         stage("create docker image") {
             steps {
                 echo "=========== start building image ==========="
-                dir ('backend') {
-                    sh 'docker build -t zxdmimfort/simple_django:latest .'
+                dir ('.') {
+                    sh 'docker build -f ./docker/backend/Dockerfile -t zxdmimfort/simple_django:latest .'
                 }
             }
         }

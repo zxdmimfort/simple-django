@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Страница не найдена{% endblock %}
+
+{% block content %}
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Ой!</h4>
+    <p>К сожалению, мы не можем найти страницу, которую вы ищете.</p>
+    <hr>
+    <p class="mb-0">Попробуйте вернуться на <a href="{% url 'home' %}">главную страницу</a> или воспользоваться поиском.</p>
+</div>
+{% endblock %}

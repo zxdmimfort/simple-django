@@ -1,6 +1,12 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
+from django.http import (
+    HttpResponse,
+    HttpRequest,
+    HttpResponseNotFound,
+    HttpResponseForbidden,
+    Http404,
+)
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -122,7 +128,15 @@ class ShowPost(DataMixin, DetailView):
 
 
 def page_not_found(request, exception):
-    return HttpResponseNotFound("<h1>Страница не найдена</h1>")
+    return render(request, "workers/404.html")
+
+
+def permission_denied(request, exception):
+    return render(request, "workers/403.html")
+
+
+def server_error(request):
+    return render(request, "workers/500.html")
 
 
 class WorkerCategory(DataMixin, ListView):
@@ -173,8 +187,10 @@ class UpdatePage(DataMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         post_slug = self.kwargs.get("post_slug")
         post = get_object_or_404(Worker, slug=post_slug)
-        if post.author != request.user:
-            return redirect("post", post_slug)
+        if not request.user.is_authenticated:
+            return redirect("users:login")
+        elif post.author != request.user:
+            return HttpResponseForbidden()
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -187,8 +203,10 @@ class DeletePage(DeleteView):
     def dispatch(self, request, *args, **kwargs):
         post_slug = self.kwargs.get("post_slug")
         post = get_object_or_404(Worker, slug=post_slug)
+        if not request.user.is_authenticated:
+            return redirect("users:login")
         if post.author != request.user:
-            return redirect("post", post_slug)
+            return HttpResponseForbidden()
         return super().dispatch(request, *args, **kwargs)
 
 

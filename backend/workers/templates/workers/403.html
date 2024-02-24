@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Доступ запрещен{% endblock %}
+
+{% block content %}
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Упс!</h4>
+    <p>К сожалению, у вас нет прав для доступа к этой странице.</p>
+    <hr>
+    <p class="mb-0">Попробуйте вернуться на <a href="{% url 'home' %}">главную страницу</a> или войти под другим аккаунтом.</p>
+</div>
+{% endblock %}

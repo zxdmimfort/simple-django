@@ -1,7 +1,8 @@
-venv
+.venv
 .idea
 __pycache__/
-db.sqlite3
-media/
-nc/.env*
-nc/db.json
+backend/media/
+static/
+
+backend/.env*
+backend/db.json

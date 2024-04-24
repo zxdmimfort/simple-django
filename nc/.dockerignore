@@ -1,8 +1,0 @@
-venv/
-.gitignore
-example.env.dev
-media
-__pycache__
-.git/
-.idea/
-db.json
